@@ -19,7 +19,10 @@ def upload_file():
         f = request.files['file']
         f.save(secure_filename(f.filename))
         time.sleep(5)
-        return jsonify([('abc', 12), ('def', 24), ('ghi', 48)])
+        return jsonify(
+                boardTranscription=[('abc', 12), ('def', 24), ('ghi', 48)],
+                audioTranscription= [('jkl', 12), ('jkl', 24), ('jkl', 48)]
+                )
 		
 		
 # If we're running in stand alone mode, run the application
