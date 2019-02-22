@@ -1,0 +1,91 @@
+{
+  "results": [
+    {
+      "alternatives": [
+        {
+          "timestamps": [
+            [
+              "hello",
+              0.33,
+              0.83
+            ],
+            [
+              "my",
+              1.01,
+              1.29
+            ],
+            [
+              "name",
+              1.29,
+              1.56
+            ],
+            [
+              "is",
+              1.56,
+              1.67
+            ],
+            [
+              "Calvin",
+              1.67,
+              2.23
+            ],
+            [
+              "and",
+              2.43,
+              2.61
+            ],
+            [
+              "I",
+              2.61,
+              2.77
+            ],
+            [
+              "am",
+              2.77,
+              2.97
+            ],
+            [
+              "a",
+              2.97,
+              3.06
+            ],
+            [
+              "student",
+              3.06,
+              3.53
+            ],
+            [
+              "at",
+              3.53,
+              3.7
+            ],
+            [
+              "Wentworth",
+              3.7,
+              4.17
+            ],
+            [
+              "institute",
+              4.17,
+              4.68
+            ],
+            [
+              "of",
+              4.71,
+              4.86
+            ],
+            [
+              "technology",
+              4.86,
+              5.64
+            ]
+          ],
+          "confidence": 0.892,
+          "transcript": "hello my name is Calvin and I am a student at Wentworth institute of technology "
+        }
+      ],
+      "final": true
+    }
+  ],
+  "result_index": 0
+}
