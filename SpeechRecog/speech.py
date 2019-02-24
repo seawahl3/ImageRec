@@ -21,6 +21,9 @@ class SpeechRecog ():
                                 max_alternatives=1)
             json.dump(result.get_result(), fp, indent=2)
             audioTranscription = []
-            for transcription in result.get_result()["results"][0]["alternatives"][0]["timestamps"]:
-                audioTranscription.append((transcription[0],transcription[1]))
+            for speaker in result.get_result()["results"]:
+                for transcription in speaker["alternatives"][0]["timestamps"]:
+                    audioTranscription.append((transcription[0], transcription[1]))
+                audioTranscription[len(audioTranscription) - 1] = (audioTranscription[len(audioTranscription) - 1][0] + "." , audioTranscription[len(audioTranscription) - 1][1])
+            
             return audioTranscription
