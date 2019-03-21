@@ -9,8 +9,11 @@ import importlib.machinery
 
 loader = importlib.machinery.SourceFileLoader('speech', '../../SpeechRecog/speech.py')
 handle = loader.load_module('speech')
-
 from speech import SpeechRecog
+
+loader = importlib.machinery.SourceFileLoader('HandleVideo', '../../WordSplitting/VideoHandling.py')
+handle = loader.load_module('HandleVideo')
+from HandleVideo import HandleVideo
 
 
 # Create the application instance
@@ -26,8 +29,9 @@ def upload_file():
     if request.method == 'POST':
         f = request.files['file']
         f.save(secure_filename(f.filename))
+
         return jsonify(
-                boardTranscription=[('abc', 12), ('def', 24), ('ghi', 48)],
+                boardTranscription=HandleVideo(f.filename),
                 audioTranscription= SpeechRecog().get_audio_transcription(f.filename)
                 )
 		

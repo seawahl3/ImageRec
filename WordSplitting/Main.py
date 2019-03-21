@@ -109,6 +109,7 @@ def main():
             cv2.imwrite('letters/%s/%d.png'%(f, j), wordImg)
             cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
             cv2.imwrite('letters/%s/summary.png'%f, img)
+        # call erics code
             
         
             

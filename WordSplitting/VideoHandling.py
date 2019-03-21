@@ -1,6 +1,6 @@
 import cv2
 import os
-
+from Main import main
 
 
 def HandleVideo(Video):
@@ -43,6 +43,7 @@ def HandleVideo(Video):
     #Milliseconds to seconds
     timeStamps = [x * 0.001 for x in timeStamps]
     print(timeStamps)
+    main()
         
 
 
