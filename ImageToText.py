@@ -28,30 +28,6 @@ wordChecker = SpellChecker()
 # Load the models built in the previous steps
 cnn_model = load_model('Senior_Project_cnn_model.h5')
 
-def findWord(imageName):
-	
-	# Empty string to add each of the letters to as they are found
-	word="" 
-
-	# Create directory to store the images of the letters
-	lettersDirectory = os.getcwd+"\\letters"
-	#os.mkdir(lettersDirectory)
-
-	# Take the Image of the Word and 
-	# parse it into individual images of the letters
-	# storing them in specificed directory
-	KevinsClass.wordToLetters(imageName, lettersDirectory)
-
-	for image in os.listdir(lettersDirectory):		
-		word += letterFinder(image)
-
-	# Delete the temp image directory
-	#shutil.rmtree(lettersDirectory)
-
-
-	return wordChecker.correction(word)
-
-
 def letterFinder(imageName):
 
 	prediction = 62
