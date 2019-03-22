@@ -32,6 +32,7 @@ characters = {
 """
 
 # Load the models built in the previous steps
+
 # print(os.getcwd())
 cnn_model = load_model('temp.h5')
 
@@ -64,3 +65,4 @@ def letterIdentifier(imageName):
     prediction = np.argmax(prediction)
     # print(prediction)
     return str(characters[int(prediction)])
+
