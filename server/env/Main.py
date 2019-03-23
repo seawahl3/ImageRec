@@ -4,7 +4,7 @@ import numpy as np
 import math
 from ImageToText import findWord
 
-def wordSplitting(img, kernelSize=30, sigma=11, theta=7, minSize=0):
+def wordSplitting(img, kernelSize=30, sigma=11, theta=7, minSize=0, maxSize=0):
     kernel = createKernel(kernelSize, sigma, theta)
     imgFiltered = cv2.filter2D(img, -1, kernel, borderType=cv2.BORDER_REPLICATE).astype(np.uint8)
     
@@ -23,6 +23,8 @@ def wordSplitting(img, kernelSize=30, sigma=11, theta=7, minSize=0):
     res = []
     for c in components:
         if cv2.contourArea(c) < minSize:
+            continue
+        if cv2.contourArea(c) > maxSize:
             continue
         currBox = cv2.boundingRect(c)
         (x, y, w, h) = currBox
@@ -76,7 +78,7 @@ def FrameHandler(frame):
     #Kernel Size, sigma and theta need to be odd
     # Words : kernel:21 sigma:15 theta:9 minSize:250
     # Letters: kernel:1 sigma:1 theta:1 minSize:0
-    res = wordSplitting(img, kernelSize=21, sigma=15, theta=9, minSize=250)
+    res = wordSplitting(img, kernelSize=21, sigma=15, theta=9, minSize=250, maxSize=1500)
     
     if not os.path.exists('out'):
         os.mkdir('out')
@@ -102,7 +104,7 @@ def FrameHandler(frame):
         if not os.path.exists('letters/%s' %f):
             os.mkdir('letters/%s'%f)
             
-        res = wordSplitting(img, kernelSize =1, sigma=1, theta=1, minSize=0)
+        res = wordSplitting(img, kernelSize =1, sigma=1, theta=1, minSize=0, maxSize=1500)
         
         print('Found %d'%len(res) + ' letter(s) in %s'%f)
         for(j, w) in enumerate(res):
