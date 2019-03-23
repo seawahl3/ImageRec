@@ -1,6 +1,7 @@
 import cv2
 import os
-from Main import main
+from Main import FrameHandler
+import shutil
 
 
 def HandleVideo(Video):
@@ -19,18 +20,16 @@ def HandleVideo(Video):
         prev_frame=frame[:]
         ret, frame = cap.read() 
         
-
-        
         if ret:
-            #cv2.imshow('frame',frame)
-            #if cv2.waitKey(1) & 0xFF == ord('q'):
-                #break
+            # cv2.imshow('frame',frame)
+            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            #     break
             #Get a frame every 30 seconds
             currentFrame += 1
             if currentFrame == (framerate * 30):
                 currentFrame = 0
                 frameCount += 1
-                #cv2.imshow('frame', frame)
+                # cv2.imshow('frame', frame)
                 cv2.imwrite('VideoFrameData/%s/Frame%d.png'%(Video, frameCount), frame)
                 timeStamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
         else:
@@ -42,12 +41,21 @@ def HandleVideo(Video):
     cap.release()
     #Milliseconds to seconds
     timeStamps = [x * 0.001 for x in timeStamps]
-    print(timeStamps)
-    main()
-        
+    index = 0
+    result = []
+    for(i, f) in enumerate(os.listdir('VideoFrameData')):
+        print('VideoFrameData/%s'%f)
+        for (x, y) in enumerate(os.listdir('VideoFrameData/%s'%f)):
+            t = (timeStamps[index], FrameHandler('VideoFrameData/%s/%s'%(f, y)))
+            result.append(t)
+            # shutil.rmtree('out')
+            # shutil.rmtree('letters')
+            index += 1
+
+    print(result)
 
 
-HandleVideo('TestVideo2.0.mp4')
+#HandleVideo('TestVideo2.0.mp4')
 
 #Method call to the Word Splitter using the file location of the video frames
 

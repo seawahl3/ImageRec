@@ -7,11 +7,11 @@ import time
 import sys
 import importlib.machinery
 
-loader = importlib.machinery.SourceFileLoader('speech', '../../SpeechRecog/speech.py')
+loader = importlib.machinery.SourceFileLoader('speech', '../SpeechRecog/speech.py')
 handle = loader.load_module('speech')
 from speech import SpeechRecog
 
-loader = importlib.machinery.SourceFileLoader('HandleVideo', '../../WordSplitting/VideoHandling.py')
+loader = importlib.machinery.SourceFileLoader('HandleVideo', '../WordSplitting/VideoHandling.py')
 handle = loader.load_module('HandleVideo')
 from HandleVideo import HandleVideo
 

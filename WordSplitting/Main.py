@@ -2,22 +2,23 @@ import os
 import cv2
 import numpy as np
 import math
+from ImageToText import findWord
 
 def wordSplitting(img, kernelSize=30, sigma=11, theta=7, minSize=0):
     kernel = createKernel(kernelSize, sigma, theta)
     imgFiltered = cv2.filter2D(img, -1, kernel, borderType=cv2.BORDER_REPLICATE).astype(np.uint8)
     
-    #cv2.imshow('image',imgFiltered)
-    #cv2.waitKey(0)
+    # cv2.imshow('image',imgFiltered)
+    # cv2.waitKey(0)
     
-    (_, imgThres) = cv2.threshold(imgFiltered, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    imgThresh = 255 - imgThres
+    (_, imgThresh) = cv2.threshold(imgFiltered, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    imgThresh = 255 - imgThresh
     
-    #cv2.imshow('image',imgThresh)
-    #cv2.waitKey(0)
+    # cv2.imshow('image',imgThresh)
+    # cv2.waitKey(0)
         
         
-    (_, components, _) = cv2.findContours(imgThresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    (components, _) = cv2.findContours(imgThresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
     res = []
     for c in components:
@@ -64,52 +65,58 @@ def createKernel(kernelSize, sigma, theta):
     return kernel
 
 
-def main():
+def FrameHandler(frame):
     
     print(os.getcwd())
-    imgFile = os.listdir('PictureData')
     
-    for(i, f) in enumerate(imgFile):
-        print('File: %s is being processed for words'%f)
-        
-        img = convertImage(cv2.imread('PictureData/%s'%f), 100)
-        
-        #Kernel Size, sigma and theta need to be odd
-        # Words : kernel:21 sigma:15 theta:9 minSize:250
-        # Letters: kernel:1 sigma:1 theta:1 minSize:0
-        res = wordSplitting(img, kernelSize=21, sigma=15, theta=9, minSize=250)
-        
-        if not os.path.exists('out/%s'%f):
-            os.mkdir('out/%s'%f)
-            
-        print('Found %d'%len(res) + ' word(s) in %s'%f)
-        for (j, w) in enumerate(res):
-            (wordBox, wordImg) = w
-            (x, y, w, h) = wordBox
-            cv2.imwrite('out/%s/%d.png'%(f, j), wordImg)
-            cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
-            cv2.imwrite('out/%s/summary.png'%f, img)
+    print('File: ' + frame + ' is being processed for words')
+    
+    img = convertImage(cv2.imread(frame), 100)
+    
+    #Kernel Size, sigma and theta need to be odd
+    # Words : kernel:21 sigma:15 theta:9 minSize:250
+    # Letters: kernel:1 sigma:1 theta:1 minSize:0
+    res = wordSplitting(img, kernelSize=21, sigma=15, theta=9, minSize=250)
+    
+    if not os.path.exists('out'):
+        os.mkdir('out')
+
+    print('Found %d'%len(res) + ' word(s) in %s')
+    for (j, w) in enumerate(res):
+        (wordBox, wordImg) = w
+        (x, y, w, h) = wordBox
+        cv2.imwrite('out/%d.png'%j, wordImg)
+        cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
+        # cv2.imwrite('out/summary.png', img)
             
             
     letterFile = os.listdir('out')      
     for(i, f) in enumerate(letterFile):
-        print('File: %s is being processed for letters' %f)
+        print('File: %s is being processed for letters ' %f)
         
         img = convertImage(cv2.imread('out/%s'%f), 100)
+
+        if not os.path.exists('letters'):
+            os.mkdir('letters')
         
         if not os.path.exists('letters/%s' %f):
             os.mkdir('letters/%s'%f)
             
-        res = wordSplitting(letterFile, kernelSize =1, sigma=1, theta=1, minSize=0)
+        res = wordSplitting(img, kernelSize =1, sigma=1, theta=1, minSize=0)
         
-        print('Found %d'%len(res) + 'letter(s) in %s'%f)
+        print('Found %d'%len(res) + ' letter(s) in %s'%f)
         for(j, w) in enumerate(res):
             (wordBox, wordImg) = w
             (x, y, w, h) = wordBox
             cv2.imwrite('letters/%s/%d.png'%(f, j), wordImg)
             cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
-            cv2.imwrite('letters/%s/summary.png'%f, img)
-        # call erics code
+            # cv2.imwrite('letters/%s/summary.png'%f, img)
+
+    line = ''
+    for path in os.listdir('letters'):
+        line = findWord('letters/' + path) + ' '
+    return line
+
             
         
             
