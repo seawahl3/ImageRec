@@ -104,7 +104,7 @@ def FrameHandler(frame):
         if not os.path.exists('letters/%s' %f):
             os.mkdir('letters/%s'%f)
             
-        res = wordSplitting(img, kernelSize =1, sigma=1, theta=1, minSize=0, maxSize=1500)
+        res = wordSplitting(img, kernelSize =1, sigma=1, theta=1, minSize=0, maxSize=10000)
         
         print('Found %d'%len(res) + ' letter(s) in %s'%f)
         for(j, w) in enumerate(res):
@@ -117,7 +117,8 @@ def FrameHandler(frame):
     line = ''
     os.listdir('letters')
     for path in os.listdir('letters'):
-        line = findWord('letters/' + path) + ' '
+        line += findWord('letters/' + path) + ' '
+        print(line)
     return line
 
             

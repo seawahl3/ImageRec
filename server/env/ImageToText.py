@@ -34,15 +34,13 @@ characters = {
 # Load the models built in the previous steps
 
 # print(os.getcwd())
-cnn_model = load_model('temp.h5')
-
 
 def findWord(folderpath):
     # Empty string to add each of the letters to as they are found
     word = ""
     for image in enumerate(os.listdir(folderpath)):
-        print(folderpath + '/' + image)
-        word += letterIdentifier(folderpath + '/' + image)
+        word += letterIdentifier(folderpath + '/' + image[1])
+
     # Delete the temp image directory
     # shutil.rmtree(lettersDirectory)
     # return wordChecker.correction(word)
@@ -50,6 +48,9 @@ def findWord(folderpath):
 
 
 def letterIdentifier(imageName):
+    keras.backend.clear_session()
+    cnn_model = load_model('temp.h5')
+
     prediction = 47
     # Load the image and convert it to grayscale
     image = cv2.imread(imageName, cv2.IMREAD_GRAYSCALE)
@@ -62,8 +63,8 @@ def letterIdentifier(imageName):
     image = image.astype('float32') / 255
     # Define prediction variables
     prediction = cnn_model.predict(image.reshape(1, 28, 28, 1))[0]
-    print(prediction)
-    prediction = np.argmax(prediction)
     # print(prediction)
+    prediction = np.argmax(prediction)
+    print (str(characters[int(prediction) + 1]))
     return str(characters[int(prediction) + 1])
 
