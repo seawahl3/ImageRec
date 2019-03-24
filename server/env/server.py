@@ -24,7 +24,9 @@ def upload_file():
         f.save(secure_filename(f.filename))
         return jsonify(
                 boardTranscription=HandleVideo(f.filename),
-                audioTranscription= SpeechRecog().get_audio_transcription(f.filename)
+                #audioTranscription= SpeechRecog().get_audio_transcription(f.filename)
+                # boardTranscription=[],
+                audioTranscription= []
                 )
 		
 		

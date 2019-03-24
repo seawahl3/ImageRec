@@ -5,7 +5,9 @@ import shutil
 
 
 def HandleVideo(Video):
-    
+    if not os.path.exists('VideoFrameData/'):
+        os.mkdir('VideoFrameData/')
+
     if not os.path.exists('VideoFrameData/%s'%Video):
         os.mkdir('VideoFrameData/%s'%Video)
     
@@ -46,13 +48,14 @@ def HandleVideo(Video):
     for(i, f) in enumerate(os.listdir('VideoFrameData')):
         print('VideoFrameData/%s'%f)
         for (x, y) in enumerate(os.listdir('VideoFrameData/%s'%f)):
-            t = (timeStamps[index], FrameHandler('VideoFrameData/%s/%s'%(f, y)))
+            t = (FrameHandler('VideoFrameData/%s/%s'%(f, y)), math.floor(timeStamps[index]))
             result.append(t)
-            # shutil.rmtree('out')
-            # shutil.rmtree('letters')
+            shutil.rmtree('out')
+            shutil.rmtree('letters')
             index += 1
-
+    shutil.rmtree('VideoFrameData')
     print(result)
+    return result
 
 
 #HandleVideo('TestVideo2.0.mp4')
