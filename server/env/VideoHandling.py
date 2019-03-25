@@ -2,6 +2,7 @@ import cv2
 import os
 from Main import FrameHandler
 import shutil
+import math
 
 
 def HandleVideo(Video):
@@ -28,7 +29,12 @@ def HandleVideo(Video):
             #     break
             #Get a frame every 30 seconds
             currentFrame += 1
-            if currentFrame >= (framerate * 30):
+            if currentFrame == 1:
+                currentFrame = 0
+                cv2.imwrite('VideoFrameData/%s/Frame%d.png'%(Video, frameCount), frame)
+                timeStamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
+                frameCount+=1
+            if currentFrame >= (framerate * 15):
                 currentFrame = 0
                 frameCount += 1
                 # cv2.imshow('frame', frame)
@@ -47,12 +53,12 @@ def HandleVideo(Video):
     result = []
     for(i, f) in enumerate(os.listdir('VideoFrameData')):
         print('VideoFrameData/%s'%f)
-        for (x, y) in enumerate(os.listdir('VideoFrameData/%s'%f)):
+        for (x, y) in enumerate(sorted(os.listdir('VideoFrameData/%s'%f))):
             t = (FrameHandler('VideoFrameData/%s/%s'%(f, y)), math.floor(timeStamps[index]))
             result.append(t)
-            shutil.rmtree('out')
-            shutil.rmtree('letters')
+            # shutil.rmtree('letters')
             index += 1
+        shutil.rmtree('out')
     shutil.rmtree('VideoFrameData')
     print(result)
     return result

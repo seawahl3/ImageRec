@@ -27,8 +27,14 @@ def wordSplitting(img, kernelSize=30, sigma=11, theta=7, minSize=0, maxSize=0):
         if cv2.contourArea(c) > maxSize:
             continue
         currBox = cv2.boundingRect(c)
+        xPadding = 10
+        yPadding = 10
         (x, y, w, h) = currBox
-        currImg = img[y:y+h, x:x+w]
+        while x-xPadding < 0:
+            xPadding -= 1
+        while y-yPadding < 0:
+            yPadding -= 1
+        currImg = img[y-yPadding:y+h+yPadding, x-xPadding:x+w+xPadding]
         res.append((currBox, currImg))
         
     return sorted(res, key=lambda entry:entry[0][0])
@@ -78,12 +84,12 @@ def FrameHandler(frame):
     #Kernel Size, sigma and theta need to be odd
     # Words : kernel:21 sigma:15 theta:9 minSize:250
     # Letters: kernel:1 sigma:1 theta:1 minSize:0
-    res = wordSplitting(img, kernelSize=21, sigma=15, theta=9, minSize=250, maxSize=1500)
+    res = wordSplitting(img, kernelSize=21, sigma=15, theta=9, minSize=250, maxSize=15000)
     
     if not os.path.exists('out'):
         os.mkdir('out')
 
-    print('Found %d'%len(res) + ' word(s) in %s')
+    print('Found %d'%len(res) + ' word(s) ' + frame)
     for (j, w) in enumerate(res):
         (wordBox, wordImg) = w
         (x, y, w, h) = wordBox
@@ -93,32 +99,32 @@ def FrameHandler(frame):
             
             
     letterFile = os.listdir('out')      
-    for(i, f) in enumerate(letterFile):
-        print('File: %s is being processed for letters ' %f)
+    # for(i, f) in enumerate(letterFile):
+    #     print('File: %s is being processed for letters ' %f)
         
-        img = convertImage(cv2.imread('out/%s'%f), 100)
+    #     img = convertImage(cv2.imread('out/%s'%f), 100)
 
-        if not os.path.exists('letters'):
-            os.mkdir('letters')
+    #     if not os.path.exists('letters'):
+    #         os.mkdir('letters')
         
-        if not os.path.exists('letters/%s' %f):
-            os.mkdir('letters/%s'%f)
+    #     if not os.path.exists('letters/%s' %f):
+    #         os.mkdir('letters/%s'%f)
             
-        res = wordSplitting(img, kernelSize =1, sigma=1, theta=1, minSize=0, maxSize=10000)
+    #     res = wordSplitting(img, kernelSize =1, sigma=1, theta=1, minSize=0, maxSize=10000)
         
-        print('Found %d'%len(res) + ' letter(s) in %s'%f)
-        for(j, w) in enumerate(res):
-            (wordBox, wordImg) = w
-            (x, y, w, h) = wordBox
-            cv2.imwrite('letters/%s/%d.png'%(f, j), wordImg)
-            cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
-            # cv2.imwrite('letters/%s/summary.png'%f, img)
+    #     print('Found %d'%len(res) + ' letter(s) in %s'%f)
+    #     for(j, w) in enumerate(res):
+    #         (wordBox, wordImg) = w
+    #         (x, y, w, h) = wordBox
+    #         cv2.imwrite('letters/%s/%d.png'%(f, j), wordImg)
+    #         cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
+    #         # cv2.imwrite('letters/%s/summary.png'%f, img)
 
     line = ''
-    os.listdir('letters')
-    for path in os.listdir('letters'):
-        line += findWord('letters/' + path) + ' '
-        print(line)
+    for path in enumerate(sorted(os.listdir('out'))):
+        print(path)
+        line += findWord('out/' + path[1]) + ' '
+    print(line)
     return line
 
             
