@@ -38,25 +38,19 @@ def classes(x):
         6: ('mnist', 10, 60000),
     }[x]
 
-
-def read_idx(filename):
-    # the idx file format can be found at the bottom of http://yann.lecun.com/exdb/mnist/
+# IDX file format can be found at the bottom of http://yann.lecun.com/exdb/mnist/
+def IDX(filename):
     with gzip.open(filename, 'rb') as f:
-        z, _type, dim = unpack('>HBB', f.read(4))
+        z, dtype, dim = unpack('>HBB', f.read(4))
         shape = tuple(unpack('>I', f.read(4))[0] for d in range(dim))
         return np.frombuffer(f.read(), dtype=np.uint8).reshape(shape)
 
 
 def load_emnist_type1(image_dir, dataset):
-    train_images = join(image_dir, 'emnist-'+dataset+'-train-images-idx3-ubyte.gz')
-    train_labels = join(image_dir, 'emnist-'+dataset+'-train-labels-idx1-ubyte.gz')
-    test_images = join(image_dir, 'emnist-'+dataset+'-test-images-idx3-ubyte.gz')
-    test_labels = join(image_dir, 'emnist-'+dataset+'-test-labels-idx1-ubyte.gz')
-
-    train_X = read_idx(train_images)
-    train_y = read_idx(train_labels)
-    test_X = read_idx(test_images)
-    test_y = read_idx(test_labels)
+    train_X = IDX(join(image_dir, 'emnist-'+dataset+'-train-images-idx3-ubyte.gz'))
+    train_y = IDX(join(image_dir, 'emnist-'+dataset+'-train-labels-idx1-ubyte.gz'))
+    test_X = IDX(join(image_dir, 'emnist-'+dataset+'-test-images-idx3-ubyte.gz'))
+    test_y = IDX(join(image_dir, 'emnist-'+dataset+'-test-labels-idx1-ubyte.gz'))
 
     return train_X, train_y, test_X, test_y
 
