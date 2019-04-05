@@ -51,7 +51,7 @@ characters = {
 
 def findWord(folderpath):
     # Empty string to add each of the letters to as they are found
-    word = ""
+    word=""
      for image in enumerate(os.listdir(folderpath)):
          word += letterIdentifier(folderpath + '/' + image[1])
 
