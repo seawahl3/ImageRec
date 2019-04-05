@@ -1,8 +1,10 @@
-import shutil
 import sys
 import os
-import pytesseract
-from PIL import Image
+import keras
+import cv2
+import numpy as np
+from pytesseract import image_to_string
+from keras.models import load_model
 from spellchecker import SpellChecker
 
 # Global Variables
