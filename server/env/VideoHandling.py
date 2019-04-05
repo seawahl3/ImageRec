@@ -22,25 +22,22 @@ def HandleVideo(Video):
     while(cap.isOpened()):
         prev_frame=frame[:]
         ret, frame = cap.read() 
-        
         if ret:
-            # cv2.imshow('frame',frame)
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
-            #Get a frame every 30 seconds
             currentFrame += 1
+            # Get First frame
             if currentFrame == 1:
                 currentFrame = 0
                 cv2.imwrite('VideoFrameData/%s/Frame%d.png'%(Video, frameCount), frame)
                 timeStamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
-                frameCount+=1
+                frameCount += 1
+            # Frame after interval, 15 here means frame every 15 seconds
             if currentFrame >= (framerate * 15):
                 currentFrame = 0
                 frameCount += 1
-                # cv2.imshow('frame', frame)
                 cv2.imwrite('VideoFrameData/%s/Frame%d.png'%(Video, frameCount), frame)
                 timeStamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
         else:
+            # Get Last Frame
             frameCount += 1
             cv2.imwrite('VideoFrameData/%s/Frame%d.png'%(Video, frameCount),  prev_frame)
             timeStamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
