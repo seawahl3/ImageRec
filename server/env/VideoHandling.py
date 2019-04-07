@@ -26,7 +26,7 @@ def HandleVideo(Video):
         if ret:
             currentFrame += 1
             # Frame after interval, 15 here means frame every 15 seconds
-            if currentFrame >= (framerate * 15):
+            if currentFrame >= (framerate * 10):
                 currentFrame = 0
                 frameCount += 1
                 cv2.imwrite('VideoFrameData/%s/Frame%d.png'%(Video, frameCount), frame)
