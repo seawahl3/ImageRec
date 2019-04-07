@@ -6,6 +6,8 @@ import numpy as np
 from pytesseract import image_to_string
 from keras.models import load_model
 from spellchecker import SpellChecker
+from natsort import natsorted, ns
+
 
 # Global Variables
 wordChecker = SpellChecker()
@@ -52,10 +54,12 @@ characters = {
 def findWord(folderpath):
     # Empty string to add each of the letters to as they are found
     word=""
-     for image in enumerate(os.listdir(folderpath)):
-         word += letterIdentifier(folderpath + '/' + image[1])
+    for image in enumerate(natsorted(os.listdir(folderpath))):
+        print(image)
+        word += letterIdentifier(folderpath + '/' + image[1])
 
     # return letterIdentifier(folderpath)
+    print(word)
     return wordChecker.correction(word)
     # return word
 
@@ -65,7 +69,7 @@ def letterIdentifier(imageName):
     keras.backend.clear_session()
     cnn_model = load_model('balanced.h5')
     prediction = len(characters)
-    print(prediction)
+    # print(prediction)
     # Load and convert the image it to grayscale
     image = cv2.imread(imageName, cv2.IMREAD_GRAYSCALE)
     # Resize the image to model dimensions and convert it to a numpy array

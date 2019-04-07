@@ -3,6 +3,7 @@ import os
 from Main import FrameHandler
 import shutil
 import math
+from natsort import natsorted, ns
 
 
 def HandleVideo(Video):
@@ -24,12 +25,6 @@ def HandleVideo(Video):
         ret, frame = cap.read() 
         if ret:
             currentFrame += 1
-            # Get First frame
-            if currentFrame == 1:
-                currentFrame = 0
-                cv2.imwrite('VideoFrameData/%s/Frame%d.png'%(Video, frameCount), frame)
-                timeStamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
-                frameCount += 1
             # Frame after interval, 15 here means frame every 15 seconds
             if currentFrame >= (framerate * 15):
                 currentFrame = 0
@@ -48,12 +43,12 @@ def HandleVideo(Video):
     timeStamps = [x * 0.001 for x in timeStamps]
     index = 0
     result = []
-    for(i, f) in enumerate(os.listdir('VideoFrameData')):
-        print('VideoFrameData/%s'%f)
-        for (x, y) in enumerate(sorted(os.listdir('VideoFrameData/%s'%f))):
+    for(i, f) in enumerate(natsorted(os.listdir('VideoFrameData'))):
+        for (x, y) in enumerate(natsorted(os.listdir('VideoFrameData/%s'%f))):
+            print("Video Frame being processed" + (x, y))
             t = (FrameHandler('VideoFrameData/%s/%s'%(f, y)), math.floor(timeStamps[index]))
             result.append(t)
-            # shutil.rmtree('letters')
+            shutil.rmtree('letters')
             index += 1
         shutil.rmtree('out')
     shutil.rmtree('VideoFrameData')

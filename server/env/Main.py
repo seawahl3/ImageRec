@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import math
 from ImageToText import findWord
+from natsort import natsorted, ns
 
 
 # Title: WordSegmentation
@@ -92,7 +93,7 @@ def FrameHandler(frame):
     #Kernel Size, sigma and theta need to be odd
     # Words : kernel:21 sigma:15 theta:9 minSize:250
     # Letters: kernel:1 sigma:1 theta:1 minSize:0
-    res = Splitter(img, kernelSize=21, sigma=15, theta=9, minSize=250, maxSize=15000)
+    res = Splitter(img, kernelSize=25, sigma=19, theta=11, minSize=250, maxSize=5000)
     
     if not os.path.exists('out'):
         os.mkdir('out')
@@ -129,9 +130,9 @@ def FrameHandler(frame):
             # cv2.imwrite('letters/%s/summary.png'%f, img)
 
     line = ''
-    for path in enumerate(sorted(os.listdir('out'))):
+    for path in enumerate(natsorted(os.listdir('letters'))):
         print(path)
-        line += findWord('out/' + path[1]) + ' '
+        line += findWord('letters/' + path[1]) + ' '
     print(line)
     return line
 
