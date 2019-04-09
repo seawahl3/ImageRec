@@ -10,7 +10,7 @@ from natsort import natsorted, ns
 # Author: Harald Scheidl
 # Date: 2018
 # Availability: https://github.com/githubharald/WordSegmentation
-def Splitter(img, kernelSize=30, sigma=11, theta=7, minSize=0, maxSize=0):
+def Splitter(img, kernelSize=30, sigma=11, theta=7, minSize=0, maxSize=0, histFilter=False):
     #Creates blurring kernel
     kernel = createKernel(kernelSize, sigma, theta)
     #Blurrs passed image
@@ -22,7 +22,8 @@ def Splitter(img, kernelSize=30, sigma=11, theta=7, minSize=0, maxSize=0):
     
     cv2.imwrite('FilteredPictures/Blurred.png', imgFiltered)
     
-    imgFiltered = cv2.equalizeHist(imgFiltered)
+    if(histFilter):
+        imgFiltered = cv2.equalizeHist(imgFiltered)
     #cv2.imshow('image',imgFiltered)
     #cv2.waitKey(0)
     
@@ -103,10 +104,9 @@ def FrameHandler(frame):
     img = convertImage(cv2.imread(frame))
     
     #Kernel Size, sigma and theta need to be odd
-    # Words : kernel:21 sigma:15 theta:9 minSize:250
-    # Letters: kernel:1 sigma:1 theta:1 minSize:0
-    print(type(img))
-    res = Splitter(img, kernelSize=21,sigma=15, theta=11, minSize=100, maxSize=10000)
+    # Words : kernel:21 sigma:15 theta:9 minSize:250 - Sometimes histFilter=True gives better results
+    # Letters: kernel:1 sigma:1 theta:1 minSize:0 - histFilter does not help for letters 
+    res = Splitter(img, kernelSize=21,sigma=15, theta=11, minSize=100, maxSize=10000, histFilter=True)
     
     if not os.path.exists('out'):
         os.mkdir('out')
@@ -132,15 +132,15 @@ def FrameHandler(frame):
         if not os.path.exists('letters/%s' %f):
             os.mkdir('letters/%s'%f)
             
-        res = Splitter(img, kernelSize =1, sigma=1, theta=1, minSize=1, maxSize=10000)
+        res = Splitter(img, kernelSize =1, sigma=1, theta=1, minSize=1, maxSize=10000, histFilter=False)
         
         print('Found %d'%len(res) + ' letter(s) in %s'%f)
         for(j, w) in enumerate(res):
             (wordBox, wordImg) = w
             (x, y, w, h) = wordBox
             cv2.imwrite('letters/%s/%d.png'%(f, j), wordImg)
-            #cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
-            #cv2.imwrite('letters/%s/summary.png'%f, img)
+            cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
+            cv2.imwrite('letters/%s/summary.png'%f, img)
 
     line = ''
     
@@ -153,5 +153,4 @@ def FrameHandler(frame):
             
         
             
-#FrameHandler("image0.jpg")
-    
+#FrameHandler("Frame6.png")
