@@ -53,10 +53,10 @@ characters = {
 
 def findWord(folderpath):
     # Empty string to add each of the letters to as they are found
-    word=""
-    for image in enumerate(natsorted(os.listdir(folderpath))):
-        print(image)
-        word += letterIdentifier(folderpath + '/' + image[1])
+    word=image_to_string(folderpath, config='--psm 8 --dpi 70')
+    # for image in enumerate(natsorted(os.listdir(folderpath))):
+    #     print(image)
+    #     word += letterIdentifier(folderpath + '/' + image[1])
 
     # return letterIdentifier(folderpath)
     print(word)
@@ -72,6 +72,7 @@ def letterIdentifier(imageName):
     # print(prediction)
     # Load and convert the image it to grayscale
     image = cv2.imread(imageName, cv2.IMREAD_GRAYSCALE)
+    image = 255 - image
     # Resize the image to model dimensions and convert it to a numpy array
     image = np.array(cv2.resize(image, (28, 28), 1)).astype('float32') / 255
     # Define array of probabilities

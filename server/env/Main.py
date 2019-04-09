@@ -19,10 +19,11 @@ def Splitter(img, kernelSize=30, sigma=11, theta=7, minSize=0, maxSize=0):
     # Uncomment to show blurred image
     #cv2.imshow('image',imgFiltered)
     #cv2.waitKey(0)
+    imgFiltered = cv2.equalizeHist(imgFiltered)
     
+    os.mkdir("FilteredPictures")
     cv2.imwrite('FilteredPictures/Blurred.png', imgFiltered)
     
-    imgFiltered = cv2.equalizeHist(imgFiltered)
     #cv2.imshow('image',imgFiltered)
     #cv2.waitKey(0)
     
@@ -30,8 +31,7 @@ def Splitter(img, kernelSize=30, sigma=11, theta=7, minSize=0, maxSize=0):
     
     #Black-white Threshold
     (_, imgThresh) = cv2.threshold(imgFiltered, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    imgThresh = 255 - imgThresh
-    
+    imgThresh = 255 - imgThresh    
     cv2.imwrite('FilteredPictures/Blackwhite.png', imgThresh)
 
     # Uncomment to show image with black-white threshold
@@ -41,7 +41,7 @@ def Splitter(img, kernelSize=30, sigma=11, theta=7, minSize=0, maxSize=0):
 
         
     #Finds the contours of each element to be split
-    (_, components, _) = cv2.findContours(imgThresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    (components, _) = cv2.findContours(imgThresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
     #Checks for min and max size of contours, then adds padding to contours to give wiggle room around the split elements
     res = []
@@ -92,6 +92,15 @@ def createKernel(kernelSize, sigma, theta):
     #print(kernel)
     return kernel
 
+def white_balance(img):
+    result = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    avg_a = np.average(result[:, :, 1])
+    avg_b = np.average(result[:, :, 2])
+    result[:, :, 1] = result[:, :, 1] - ((avg_a - 128) * (result[:, :, 0] / 255.0) * 1.1)
+    result[:, :, 2] = result[:, :, 2] - ((avg_b - 128) * (result[:, :, 0] / 255.0) * 1.1)
+    result = cv2.cvtColor(result, cv2.COLOR_LAB2BGR)
+    return result
+
 
 #Handles frames to be split into words then letters
 def FrameHandler(frame):
@@ -100,7 +109,9 @@ def FrameHandler(frame):
     
     print('File: ' + frame + ' is being processed for words')
     
-    img = convertImage(cv2.imread(frame))
+    preImage = cv2.imread(frame)
+    preImage = white_balance(preImage)
+    img = convertImage(preImage)
     
     #Kernel Size, sigma and theta need to be odd
     # Words : kernel:21 sigma:15 theta:9 minSize:250
@@ -117,36 +128,39 @@ def FrameHandler(frame):
         (x, y, w, h) = wordBox
         cv2.imwrite('out/%d.png'%j, wordImg)
         cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
-        cv2.imwrite('out/summary.png', img)
+        cv2.imwrite('summaryOut.png', img)
             
             
-    letterFile = os.listdir('out')      
-    for(i, f) in enumerate(letterFile):
-        print('File: %s is being processed for letters ' %f)
+    letterFile = os.listdir('out')     
+    # if not os.path.exists('letters'):
+    #     os.mkdir('letters') 
+    # for(i, f) in enumerate(letterFile):
+    #     print('File: %s is being processed for letters ' %f)
         
-        img = convertImage(cv2.imread('out/%s'%f))
-
-        if not os.path.exists('letters'):
-            os.mkdir('letters')
+    #     img = convertImage(cv2.imread('out/%s'%f))
         
-        if not os.path.exists('letters/%s' %f):
-            os.mkdir('letters/%s'%f)
+    #     if not os.path.exists('letters/%s' %f):
+    #         os.mkdir('letters/%s'%f)
             
-        res = Splitter(img, kernelSize =1, sigma=1, theta=1, minSize=1, maxSize=10000)
+    #     res = Splitter(img, kernelSize =1, sigma=1, theta=1, minSize=1, maxSize=10000)
         
-        print('Found %d'%len(res) + ' letter(s) in %s'%f)
-        for(j, w) in enumerate(res):
-            (wordBox, wordImg) = w
-            (x, y, w, h) = wordBox
-            cv2.imwrite('letters/%s/%d.png'%(f, j), wordImg)
-            #cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
-            #cv2.imwrite('letters/%s/summary.png'%f, img)
+    #     print('Found %d'%len(res) + ' letter(s) in %s'%f)
+    #     for(j, w) in enumerate(res):
+    #         (wordBox, wordImg) = w
+    #         (x, y, w, h) = wordBox
+    #         cv2.imwrite('letters/%s/%d.png'%(f, j), wordImg)
+    #         #cv2.rectangle(img, (x,y), (x+w, y+h), 0, 1)
+    #         #cv2.imwrite('letters/%s/summary.png'%f, img)
 
     line = ''
-    
-    for path in enumerate(natsorted(os.listdir('letters'))):
+
+    for path in enumerate(natsorted(os.listdir('out'))):
         print(path)
-        line += findWord('letters/' + path[1]) + ' '
+        line += findWord('out/' + path[1]) + ' '
+    
+    # for path in enumerate(natsorted(os.listdir('letters'))):
+    #     print(path)
+    #     line += findWord('letters/' + path[1]) + ' '
     print(line)
     return line
 

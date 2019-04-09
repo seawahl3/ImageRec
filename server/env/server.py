@@ -7,6 +7,8 @@ import time
 import sys
 from speech import SpeechRecog
 from VideoHandling import HandleVideo
+import os 
+import shutil
 
 
 # Create the application instance
@@ -20,13 +22,21 @@ CORS(app)
 @crossdomain(origin='*')
 def upload_file():
     if request.method == 'POST':
-        f = request.files['file']
+        try:
+                f = request.files['file']
+        except:
+                if os.path.exists('/VideoFrameData'):
+                        shutil.rmtree('/VideoFrameData')
+                if os.path.exists('/out'):
+                        shutil.rmtree('/out')
+                if os.path.exists('/letters'):
+                        shutil.rmtree('/letters')
         f.save(secure_filename(f.filename))
         return jsonify(
                 boardTranscription=HandleVideo(f.filename),
-                #audioTranscription= SpeechRecog().get_audio_transcription(f.filename)
+                audioTranscription= SpeechRecog().get_audio_transcription(f.filename)
                 # boardTranscription=[],
-                audioTranscription= []
+                # audioTranscription= []
                 )
 		
 		

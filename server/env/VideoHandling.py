@@ -45,10 +45,9 @@ def HandleVideo(Video):
     result = []
     for(i, f) in enumerate(natsorted(os.listdir('VideoFrameData'))):
         for (x, y) in enumerate(natsorted(os.listdir('VideoFrameData/%s'%f))):
-            print("Video Frame being processed" + (x, y))
             t = (FrameHandler('VideoFrameData/%s/%s'%(f, y)), math.floor(timeStamps[index]))
             result.append(t)
-            shutil.rmtree('letters')
+            # shutil.rmtree('letters')
             index += 1
         shutil.rmtree('out')
     shutil.rmtree('VideoFrameData')
